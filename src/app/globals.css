@@ -1,0 +1,537 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #C6D932;
+  --color-secondary: #A0A0A0;
+  --color-background: #0D0D0D;
+  --color-foreground: #ededed;
+}
+
+/* Custom Utilities for Hide Scrollbar if needed */
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+:root {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
+
+body {
+  background: var(--color-background);
+  color: #ededed;
+  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+  /* Prevent horizontal scroll */
+}
+
+/* ───── Navbar Link Styles ───── */
+.nav-link {
+  position: relative;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #a0a0a0;
+  transition: color 0.2s ease;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.nav-link:hover,
+.nav-link-active {
+  color: #C6D932;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: #C6D932;
+  transform: translateX(-50%);
+  transition: width 0.25s ease;
+}
+
+.nav-link:hover::after,
+.nav-link-active::after {
+  width: 60%;
+}
+
+/* ───── Dropdown Menu ───── */
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(20, 20, 20, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  padding: 0.5rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  animation: dropFadeIn 0.2s ease-out;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 0.6rem 1rem;
+  font-size: 0.82rem;
+  color: #a0a0a0;
+  border-radius: 0.5rem;
+  transition: all 0.15s ease;
+}
+
+.dropdown-item:hover {
+  color: #C6D932;
+  background: rgba(198, 217, 50, 0.08);
+}
+
+/* ───── Mega Dropdown (Make/Brands) ───── */
+.mega-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 680px;
+  background: rgba(15, 15, 15, 0.97);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+  animation: dropFadeIn 0.25s ease-out;
+}
+
+.mega-dropdown-header {
+  padding: 0.25rem 0.5rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #C6D932;
+}
+
+.mega-dropdown-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+
+.mega-dropdown-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  margin: 0.5rem 0;
+}
+
+.mega-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.mega-item {
+  padding: 0.45rem 0.75rem;
+  font-size: 0.82rem;
+  color: #a0a0a0;
+  border-radius: 0.4rem;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.mega-item:hover {
+  color: #C6D932;
+  background: rgba(198, 217, 50, 0.07);
+}
+
+/* ───── Mobile Nav ───── */
+.mobile-nav-link {
+  display: block;
+  padding: 0.9rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #ededed;
+  transition: all 0.15s ease;
+}
+
+.mobile-nav-link:hover,
+.mobile-nav-link:active {
+  color: #C6D932;
+  background: rgba(198, 217, 50, 0.05);
+}
+
+.mobile-sub-link {
+  display: block;
+  padding: 0.6rem 1.5rem 0.6rem 2.5rem;
+  font-size: 0.9rem;
+  color: #a0a0a0;
+  transition: color 0.15s ease;
+}
+
+.mobile-sub-link:hover {
+  color: #C6D932;
+}
+
+.mobile-brand-item {
+  display: block;
+  padding: 0.4rem 0.25rem;
+  font-size: 0.82rem;
+  color: #a0a0a0;
+  transition: color 0.15s ease;
+}
+
+.mobile-brand-item:hover {
+  color: #C6D932;
+}
+
+/* ───── Animations ───── */
+@keyframes dropFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ───── Find Cars Cards ───── */
+.find-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.find-card:hover {
+  background: rgba(198, 217, 50, 0.04);
+  border-color: rgba(198, 217, 50, 0.15);
+  transform: translateY(-4px);
+}
+
+.find-card-icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.75rem;
+  background: rgba(198, 217, 50, 0.1);
+  color: #C6D932;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.find-card:hover .find-card-icon {
+  background: #C6D932;
+  color: #000;
+}
+
+.find-card-link {
+  color: #a0a0a0;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.find-card-link:hover {
+  color: #C6D932;
+  padding-left: 0.25rem;
+}
+
+/* ───── Brand Cards ───── */
+.brand-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem 0.5rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #a0a0a0;
+  transition: all 0.3s ease;
+}
+
+.brand-card:hover {
+  background: rgba(198, 217, 50, 0.06);
+  border-color: rgba(198, 217, 50, 0.2);
+  color: #C6D932;
+  transform: translateY(-4px);
+}
+
+/* ───── How It Works ───── */
+.how-step-card {
+  text-align: center;
+  padding: 2rem 1.5rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.how-step-card:hover {
+  background: rgba(198, 217, 50, 0.04);
+  border-color: rgba(198, 217, 50, 0.15);
+  transform: translateY(-4px);
+}
+
+.how-step-number {
+  font-size: 3rem;
+  font-weight: 900;
+  color: rgba(198, 217, 50, 0.1);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+/* ───── Service Cards ───── */
+.service-card {
+  padding: 2rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.3s ease;
+}
+
+.service-card:hover {
+  background: rgba(198, 217, 50, 0.04);
+  border-color: rgba(198, 217, 50, 0.15);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(198, 217, 50, 0.05);
+}
+
+/* ───── Contact Cards ───── */
+.contact-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.3s ease;
+}
+
+.contact-card:hover {
+  border-color: rgba(198, 217, 50, 0.15);
+  transform: translateY(-2px);
+}
+
+/* ───── Smooth scroll offset for section anchors ───── */
+section[id] {
+  scroll-margin-top: 5rem;
+}
+
+div[id="inventory"] {
+  scroll-margin-top: 5rem;
+}
+
+/* ───── Auth Pages ───── */
+.auth-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  backdrop-filter: blur(20px);
+}
+
+.auth-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #a0a0a0;
+  margin-bottom: 0.5rem;
+}
+
+.auth-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: #ededed;
+  font-size: 0.875rem;
+  transition: border-color 0.2s ease;
+  outline: none;
+}
+
+.auth-input::placeholder {
+  color: rgba(160, 160, 160, 0.5);
+}
+
+.auth-input:focus {
+  border-color: #C6D932;
+}
+
+.auth-btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1.5rem;
+  background: #C6D932;
+  color: #000;
+  font-weight: 700;
+  font-size: 0.875rem;
+  border-radius: 0.75rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.auth-btn-primary:hover {
+  background: #d4e63d;
+  transform: translateY(-1px);
+}
+
+.auth-btn-primary:disabled {
+  opacity: 0.6;
+  transform: none;
+  cursor: not-allowed;
+}
+
+/* ───── Admin Sidebar ───── */
+.admin-sidebar {
+  width: 16rem;
+  height: 100vh;
+  background: rgba(10, 10, 10, 0.95);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 30;
+  transition: width 0.3s ease;
+}
+
+.admin-sidebar-collapsed {
+  width: 4.5rem;
+}
+
+.admin-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #a0a0a0;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  background: none;
+  border: none;
+  text-align: left;
+}
+
+.admin-nav-item:hover {
+  color: #ededed;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.admin-nav-item-active {
+  color: #C6D932;
+  background: rgba(198, 217, 50, 0.08);
+}
+
+/* ───── Admin Stats ───── */
+.admin-stat-card {
+  padding: 1.5rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.admin-stat-card:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+/* ───── Admin Table ───── */
+.admin-table-wrapper {
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table thead {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.admin-table th {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #a0a0a0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.admin-table td {
+  padding: 0.85rem 1rem;
+  font-size: 0.85rem;
+  color: #a0a0a0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.admin-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* ───── Admin Form ───── */
+.admin-form-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #a0a0a0;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.admin-form-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  color: #ededed;
+  font-size: 0.85rem;
+  transition: border-color 0.2s ease;
+  outline: none;
+}
+
+.admin-form-input:focus {
+  border-color: #C6D932;
+}
+
+.admin-form-input option {
+  background: #1a1a1a;
+  color: #ededed;
+}
