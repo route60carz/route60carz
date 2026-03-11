@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import { Loader2, Users as UsersIcon, Mail, Calendar, Shield, User } from 'lucide-react';
+import { Loader2, Users as UsersIcon, Mail, Calendar, Shield, User, Trash2, X } from 'lucide-react';
 
 interface Profile {
     id: string;
@@ -16,6 +16,8 @@ export default function AdminUsersPage() {
     const [users, setUsers] = useState<Profile[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+    const [deleting, setDeleting] = useState<string | null>(null);
 
     useEffect(() => {
         fetchUsers();
@@ -39,6 +41,32 @@ export default function AdminUsersPage() {
             console.error('Error fetching users:', err);
         }
         setLoading(false);
+    };
+
+    const handleDeleteUser = async (userId: string) => {
+        setDeleting(userId);
+        setError(null);
+
+        try {
+            const res = await fetch(`/api/profiles/${userId}`, { 
+                method: 'DELETE',
+                headers: {
+                    'x-admin-secret': process.env.NEXT_PUBLIC_ADMIN_PASSWORD || ''
+                }
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                setError(data.error || 'Failed to delete user');
+            } else {
+                setUsers(prev => prev.filter(u => u.id !== userId));
+            }
+        } catch (err) {
+            setError(`Failed to delete user: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        }
+
+        setDeleting(null);
+        setDeleteConfirm(null);
     };
 
     const formatDate = (dateString: string) => {
@@ -107,6 +135,9 @@ export default function AdminUsersPage() {
                                 <th className="text-left py-4 px-4 text-xs text-secondary uppercase tracking-widest font-medium">
                                     Joined
                                 </th>
+                                <th className="text-right py-4 px-4 text-xs text-secondary uppercase tracking-widest font-medium">
+                                    Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -149,6 +180,41 @@ export default function AdminUsersPage() {
                                         <div className="flex items-center gap-2">
                                             <Calendar size={14} />
                                             {formatDate(user.created_at)}
+                                        </div>
+                                    </td>
+                                    <td className="py-4 px-4">
+                                        <div className="flex items-center justify-end">
+                                            {deleteConfirm === user.id ? (
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-xs text-red-400 mr-1">Delete?</span>
+                                                    <button
+                                                        onClick={() => handleDeleteUser(user.id)}
+                                                        disabled={deleting === user.id}
+                                                        className="px-3 py-1.5 rounded-lg bg-red-500/20 text-red-400 text-xs font-medium hover:bg-red-500/30 transition-colors disabled:opacity-50"
+                                                    >
+                                                        {deleting === user.id ? (
+                                                            <Loader2 size={12} className="animate-spin" />
+                                                        ) : (
+                                                            'Yes'
+                                                        )}
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setDeleteConfirm(null)}
+                                                        className="px-3 py-1.5 rounded-lg bg-white/10 text-secondary text-xs font-medium hover:bg-white/20 transition-colors"
+                                                    >
+                                                        <X size={12} />
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    onClick={() => setDeleteConfirm(user.id)}
+                                                    disabled={user.role === 'admin'}
+                                                    title={user.role === 'admin' ? 'Cannot delete admin users' : 'Delete user'}
+                                                    className="p-2 rounded-lg text-secondary hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:text-secondary disabled:hover:bg-transparent"
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>
