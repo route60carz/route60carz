@@ -16,6 +16,7 @@ interface AuthContextType {
     loading: boolean;
     signIn: (email: string, password: string) => Promise<{ error: string | null; verifyNeeded?: boolean }>;
     signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null; verifyNeeded?: boolean }>;
+    signInWithGoogle: () => Promise<{ error: string | null }>;
     verifyEmail: (email: string, otp: string) => Promise<{ error: string | null }>;
     signOut: () => Promise<void>;
     isAdmin: boolean;
@@ -123,6 +124,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    const signInWithGoogle = async () => {
+        // Google OAuth requires backend configuration (GOOGLE_CLIENT_ID, etc.)
+        // For now, return a graceful error message
+        return { error: 'Google sign-in is not configured yet. Please use email/password login, or configure Google OAuth credentials in .env.local.' };
+    };
+
     const signOut = async () => {
         setLoading(true);
         try {
@@ -143,6 +150,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             loading,
             signIn,
             signUp,
+            signInWithGoogle,
             verifyEmail,
             signOut,
             isAdmin,

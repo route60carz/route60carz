@@ -8,7 +8,7 @@ export interface Car {
     model: string;
     price: number;
     city: string;
-    image_url: string;
+    image_url: string | null;
     gallery_images?: string[] | null;
     year: number;
     fuel_type: string;

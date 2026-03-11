@@ -29,10 +29,12 @@ export default function SignupPage() {
         setError(null);
         setLoading(true);
 
-        const { error } = await signUp(email, password, fullName);
+        const { error, verifyNeeded } = await signUp(email, password, fullName);
         if (error) {
             setError(error);
             setLoading(false);
+        } else if (verifyNeeded) {
+            router.push(`/auth/verify?email=${encodeURIComponent(email)}`);
         } else {
             setSuccess(true);
             setLoading(false);

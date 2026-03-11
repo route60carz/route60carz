@@ -28,10 +28,13 @@ export default function LoginPage() {
         setError(null);
         setLoading(true);
 
-        const { error } = await signIn(email, password);
+        const { error, verifyNeeded } = await signIn(email, password);
         if (error) {
             setError(error);
             setLoading(false);
+            if (verifyNeeded) {
+                router.push(`/auth/verify?email=${encodeURIComponent(email)}`);
+            }
         } else {
             router.push('/');
         }

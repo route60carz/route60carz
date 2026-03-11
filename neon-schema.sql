@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS cars (
   city text DEFAULT 'Theni',
   fuel_type text DEFAULT 'Petrol',
   image_url text,
+  gallery_images text[],
   status text DEFAULT 'available',
   description text,
   mileage int4,
@@ -29,12 +30,18 @@ CREATE INDEX IF NOT EXISTS idx_cars_fuel_type ON cars(fuel_type);
 -- ───── Profiles Table ─────
 CREATE TABLE IF NOT EXISTS profiles (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  email text,
+  email text UNIQUE,
   full_name text,
+  password_hash text,
   role text DEFAULT 'user' CHECK (role IN ('user', 'admin')),
+  is_email_verified boolean DEFAULT FALSE,
+  verification_otp text,
+  verification_otp_expires_at timestamptz,
   created_at timestamptz DEFAULT now(),
   last_login_at timestamptz
 );
+
+CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
 
 -- ───── Contact Inquiries Table ─────
 CREATE TABLE IF NOT EXISTS contact_inquiries (
