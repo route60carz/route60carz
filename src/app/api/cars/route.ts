@@ -1,16 +1,27 @@
 import { NextResponse } from 'next/server';
-import { getAllCars, insertCar } from '@/lib/db';
+import { getAllCars, insertCar, getPaginatedCars } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: Request) {
     try {
-        const cars = await getAllCars();
-        return NextResponse.json(cars);
+        const { searchParams } = new URL(request.url);
+        const page = parseInt(searchParams.get('page') || '1', 10);
+        const limit = parseInt(searchParams.get('limit') || '12', 10);
+        const offset = (page - 1) * limit;
+
+        const { cars, total } = await getPaginatedCars(limit, offset);
+        
+        return NextResponse.json({
+            cars,
+            total,
+            page,
+            limit
+        });
     } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Unknown error';
         console.error('API /api/cars error:', message);
-        return NextResponse.json([]);
+        return NextResponse.json({ error: message, cars: [], total: 0, page: 1, limit: 12 }, { status: 500 });
     }
 }
 

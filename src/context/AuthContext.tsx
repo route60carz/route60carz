@@ -125,10 +125,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     const signInWithGoogle = async () => {
-        const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-        if (!clientId) {
-            return { error: 'Google sign-in is not configured. Please configure Google OAuth credentials in .env.local.' };
-        }
         // Redirect to the server-side Google OAuth initiation route
         window.location.href = '/api/auth/google';
         return { error: null };

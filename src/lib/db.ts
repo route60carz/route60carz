@@ -94,6 +94,22 @@ export async function getRecentCars(limit: number = 5) {
     return rows;
 }
 
+export async function getPaginatedCars(limit: number, offset: number) {
+    const sql = getDb();
+    
+    // Strict requirement: "All database queries must use template literal syntax... Correct: sql`SELECT ...`"
+    const countResult = await sql`SELECT count(*) FROM cars`;
+    const totalCount = Number(countResult[0].count);
+
+    const cars = await sql`
+        SELECT * FROM cars 
+        ORDER BY created_at DESC 
+        LIMIT ${limit} OFFSET ${offset}
+    `;
+
+    return { cars: cars as Car[], total: totalCount };
+}
+
 // ─── Profile Helpers ────────────────────────────────────────────────
 
 export interface Profile {

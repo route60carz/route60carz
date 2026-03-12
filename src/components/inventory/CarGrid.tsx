@@ -36,6 +36,7 @@ export default function CarGrid({ initialCars = [] }: { initialCars?: Car[] }) {
     const searchParams = useSearchParams();
 
     const [cars, setCars] = useState<Car[]>(initialCars);
+    const [totalCarsCount, setTotalCarsCount] = useState<number>(initialCars.length);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -47,11 +48,6 @@ export default function CarGrid({ initialCars = [] }: { initialCars?: Car[] }) {
     const [maxPrice, setMaxPrice] = useState(5000000);
     const [sortBy, setSortBy] = useState('year-desc');
     const [currentPage, setCurrentPage] = useState(1);
-
-    useEffect(() => {
-        setCars(initialCars);
-    }, [initialCars]);
-
 
     // Sync filters from URL search params
     useEffect(() => {
@@ -72,37 +68,44 @@ export default function CarGrid({ initialCars = [] }: { initialCars?: Car[] }) {
     // Reset to page 1 when filters or sort change
     const resetPage = () => setCurrentPage(1);
 
-    const filteredCars = useMemo(() => {
-        const filtered = cars.filter(car => {
-            const query = searchQuery.toLowerCase();
-            const searchMatch = !query || `${car.make} ${car.model}`.toLowerCase().includes(query);
-            const cityMatch = selectedCity === 'All' || car.city === selectedCity;
-            const makeMatch = selectedMake === 'All' || car.make === selectedMake;
-            const fuelMatch = selectedFuel === 'All' || car.fuel_type === selectedFuel;
-            const yearMatch = selectedYear === 'All' || car.year === Number(selectedYear);
-            const priceMatch = car.price <= maxPrice;
-            return searchMatch && cityMatch && makeMatch && fuelMatch && yearMatch && priceMatch;
-        });
+    useEffect(() => {
+        let isMounted = true;
+        const fetchCars = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                // Ensure the frontend calls: /api/cars?page=...
+                const res = await fetch(`/api/cars?page=${currentPage}&limit=${CARS_PER_PAGE}`);
+                if (!res.ok) throw new Error('Failed to fetch cars');
 
-        // Sort
-        const sorted = [...filtered].sort((a, b) => {
-            switch (sortBy) {
-                case 'year-desc': return b.year - a.year;
-                case 'year-asc': return a.year - b.year;
-                case 'price-asc': return a.price - b.price;
-                case 'price-desc': return b.price - a.price;
-                case 'name-asc': return `${a.make} ${a.model}`.localeCompare(`${b.make} ${b.model}`);
-                case 'name-desc': return `${b.make} ${b.model}`.localeCompare(`${a.make} ${a.model}`);
-                default: return 0;
+                const data = await res.json();
+                if (isMounted) {
+                    setCars(data.cars || []);
+                    setTotalCarsCount(data.total || 0);
+                }
+            } catch (err: any) {
+                if (isMounted) setError(err.message || 'Something went wrong');
+            } finally {
+                if (isMounted) setLoading(false);
             }
-        });
+        };
 
-        return sorted;
-    }, [cars, searchQuery, selectedCity, selectedMake, selectedFuel, selectedYear, maxPrice, sortBy]);
+        const debounceTimer = setTimeout(() => {
+            fetchCars();
+        }, 300);
 
-    const totalPages = Math.max(1, Math.ceil(filteredCars.length / CARS_PER_PAGE));
+        return () => {
+            isMounted = false;
+            clearTimeout(debounceTimer);
+        };
+    }, [currentPage]);
+
+    const totalPages = Math.max(1, Math.ceil(totalCarsCount / CARS_PER_PAGE));
     const safePage = Math.min(currentPage, totalPages);
-    const paginatedCars = filteredCars.slice((safePage - 1) * CARS_PER_PAGE, safePage * CARS_PER_PAGE);
+    const paginatedCars = cars; // Cars are already paginated from backend
+
+    const currentRangeStart = totalCarsCount === 0 ? 0 : (safePage - 1) * CARS_PER_PAGE + 1;
+    const currentRangeEnd = Math.min(safePage * CARS_PER_PAGE, totalCarsCount);
 
     return (
         <section className="bg-background py-20 px-6 sm:px-12 md:px-24">
@@ -189,7 +192,7 @@ export default function CarGrid({ initialCars = [] }: { initialCars?: Car[] }) {
                 {/* Sort Bar */}
                 <div className="flex flex-wrap items-center justify-between mb-8 gap-4">
                     <p className="text-sm text-secondary">
-                        Showing <span className="text-white font-semibold">{paginatedCars.length}</span> of <span className="text-white font-semibold">{filteredCars.length}</span> cars
+                        Showing <span className="text-white font-semibold">{currentRangeStart}-{currentRangeEnd}</span> of <span className="text-white font-semibold">{totalCarsCount}</span> cars
                     </p>
                     <div className="flex items-center gap-2">
                         <ArrowUpDown size={14} className="text-secondary" />
@@ -234,7 +237,7 @@ export default function CarGrid({ initialCars = [] }: { initialCars?: Car[] }) {
                             ))}
                         </div>
 
-                        {filteredCars.length === 0 && (
+                        {totalCarsCount === 0 && (
                             <div className="text-center py-20 text-secondary">
                                 No cars found matching your criteria.
                             </div>
